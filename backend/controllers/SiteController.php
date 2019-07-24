@@ -13,6 +13,7 @@ use yii\db\Query;
  */
 class SiteController extends Controller
 {
+    public $enableCsrfValidation = false;
     /**
      * {@inheritdoc}
      */
@@ -40,6 +41,25 @@ class SiteController extends Controller
                     'logout' => ['post'],
                 ],
             ],
+            // For cross-domain AJAX request
+            'corsFilter'  => [
+                'class' => \yii\filters\Cors::className(),
+                'cors' => [
+                    // restrict access to domains:
+                    'Origin'                           => static::allowedDomains(),
+                    'Access-Control-Request-Method'    => ['POST', 'GET'],
+                    'Access-Control-Allow-Credentials' => true,
+                    'Access-Control-Max-Age'           => 3600
+                ],
+            ]
+        ];
+    }
+
+    public static function allowedDomains() {
+        return [
+             '*',                        // star allows all domains
+            //'http://test1.example.com',
+            //'http://test2.example.com',
         ];
     }
 
@@ -107,7 +127,7 @@ class SiteController extends Controller
      */
     public function actionGettables()
     {
-        if (Yii::$app->request->isAjax) {
+        //if (Yii::$app->request->isAjax) {
             $connection = Yii::$app->get('db2');;
             $command = $connection->createCommand("show tables");
             
@@ -115,14 +135,14 @@ class SiteController extends Controller
 
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return $result;
-        }
+        //}
     }
 
     public function actionGetfields()
     {
         $tables_fields = [];
 
-        if (Yii::$app->request->isAjax) {
+        //if (Yii::$app->request->isAjax) {
             $req = Yii::$app->request->post();
             //var_dump($req);
             foreach($req['table_list'] as $table){
@@ -135,7 +155,7 @@ class SiteController extends Controller
 
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return $tables_fields;
-        }
+        //}
     }
 
     public function actionGetdata()
@@ -146,7 +166,7 @@ class SiteController extends Controller
         $query_constraints = [];
         $rows = new Query;
 
-        if (Yii::$app->request->isAjax) {
+        //if (Yii::$app->request->isAjax) {
             $req = Yii::$app->request->post();
             //var_dump($req);
             foreach($req['table_list'] as $table){
@@ -166,6 +186,6 @@ class SiteController extends Controller
 
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return $tables_data;
-        }
+        //}
     }
 }
