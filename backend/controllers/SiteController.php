@@ -13,67 +13,21 @@ use yii\db\Query;
  */
 class SiteController extends Controller
 {
-    public $enableCsrfValidation = false;
     /**
      * {@inheritdoc}
      */
+    public $enableCsrfValidation = false;
+
     public function behaviors()
     {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        //'actions' => ['login', 'error'],
-                        'actions' => ['login', 'error', '*'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index', 'gettables', 'getfields', 'getdata'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-            // For cross-domain AJAX request
-            'corsFilter'  => [
-                'class' => \yii\filters\Cors::className(),
-                'cors' => [
-                    // restrict access to domains:
-                    'Origin'                           => static::allowedDomains(),
-                    'Access-Control-Request-Method'    => ['POST', 'GET'],
-                    'Access-Control-Allow-Credentials' => true,
-                    'Access-Control-Max-Age'           => 3600
-                ],
-            ]
+        $behaviors = parent::behaviors();
+        $behaviors['corsFilter'] = [
+            'class' => \yii\filters\Cors::className(),
         ];
+        return $behaviors;
     }
 
-    public static function allowedDomains() {
-        return [
-             '*',                        // star allows all domains
-            //'http://test1.example.com',
-            //'http://test2.example.com',
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-        ];
-    }
+    
 
     /**
      * Displays homepage.

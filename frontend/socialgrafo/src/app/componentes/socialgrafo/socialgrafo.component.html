@@ -1,10 +1,46 @@
-<div class="form-group">
+<div class="form-group container" >
     <label for="exampleFormControlSelect1">Agregar tabla</label>
-    <select class="form-control"  (click)="consultaTables()" >
-      <option>1</option>
+    <select class="form-control">
+      <option></option>
       <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
     </select>
-  </div>
+</div>
+
+
+    <div class="row">
+      <div class="col">
+        <label for="exampleFormControlSelect1">Field select table</label>
+        <select class="form-control" (change)="GetFields()">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>      
+      </div>
+      <div class="col">
+        <label for="exampleFormControlSelect1" (change)="GetFields()">Field select table</label>
+        <select class="form-control">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="form-group container" >
+        <label for="exampleFormControlSelect1">Campos de la tabla seleccionada</label>
+        <select class="form-control"   (change)="Getdata()" >
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+    </div>
+
+
+    
