@@ -6,43 +6,36 @@ $base = Url::base();
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = 'SocialGrafo';
 ?>
 <div class="site-index">
-
     <div class="row">
-        <div class="col-md-8">
-            <h1>Consultas a la BD</h1>
-            <p>Consultas para verificación del API sobre la BD</p>
+        <div class="col-md-3 row text-center">
+            <div class="col-md-12">
+                <p>
+                    <button class="btn btn-info btn-sm" onclick="addTable()">
+                        Agregar tabla
+                    </button>
+                    <button class="btn btn-info btn-sm" onclick="ajaxGetData()">
+                        Consultar
+                    </button>
+                </p>
+            </div>
+            <div class="body-content">
+                <div class="">
+                    <div class="table-selector"></div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-            <p>
-                <button class="btn btn-info" onclick="addTable()">
-                    Agregar tabla
-                </button>
-                <button class="btn btn-info" onclick="ajaxGetData()" disabled>
-                    Consultar Data
-                </button>
-            </p>
-        </div>
-    </div>
-
-    <div class="body-content">
-        <div class="row col-md-12">
-            <div class="table-selector"></div>
+        <div class="col-md-9 graph" id="graph">
+            <canvas id="network" width="500" height="500"></canvas>
         </div>
     </div>
 </div>
 
-
-
-<script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
 <script>
     var table_index = 0;
-    var options = "<option value='-1'>-- SELECCIONE --</option>"+
+    var options = "<option value='-1' selected disabled>-- CONDICIÓN --</option>"+
                   "<option value='\='>igual que</option>"+
                   "<option value='like'>parecido a</option>"+
                   "<option value='\>'>mayor que</option>"+
@@ -53,6 +46,10 @@ $this->title = 'My Yii Application';
 
     var tables_array = [];
     var tableList = [];
+    var graph = {
+        nodes: [],
+        links: []
+    }
 
     $(function(){
         ajaxGetTables();
@@ -61,8 +58,9 @@ $this->title = 'My Yii Application';
     function addTable(){
         //console.log(tables_array);
         $('.table-selector').append(''+
-            '<div class="row col-md-12 mb-3 table_container table_'+table_index+'">'+
-                '<select class="table_selected" name="table_'+table_index+'" id="table_'+table_index+'" onchange="ajaxGetFields('+table_index+')">'+
+            '<hr>'+
+            '<div class="table_container table_'+table_index+'">'+
+                '<select class="table_selected form-control form-control-sm" name="table_'+table_index+'" id="table_'+table_index+'" onchange="ajaxGetFields('+table_index+')">'+
                 '</select>'+
                 '<div class="table_field_list">'+
                 '</div>'+
@@ -78,11 +76,11 @@ $this->title = 'My Yii Application';
         $.ajax({
             url: '<?= $base ?>/index.php?r=site/gettables',
             success: function(tables) {
-                tables_array.push( { table_option: '<option class="table-option" type="checkbox" name="-1" id="-1">-- SELECCIONE --</option>' });
+                tables_array.push( { table_option: '<option class="table-option" name="-1" id="-1" selected disabled>-- TABLA --</option>' });
                 //console.log(tables);
                 for(i = 0; i < tables.length; i++){
                     let table_name = tables[i][Object.keys(tables[i])[0]];
-                    tables_array.push( { table_option: '<option class="table-option" type="checkbox" name="'+tables[i][Object.keys(tables[i])[0]]+'" id="'+tables[i][Object.keys(tables[i])[0]]+'"> '+tables[i][Object.keys(tables[i])[0]]+'</option>' });
+                    tables_array.push( { table_option: '<option class="table-option" name="'+tables[i][Object.keys(tables[i])[0]]+'" id="'+tables[i][Object.keys(tables[i])[0]]+'"> '+tables[i][Object.keys(tables[i])[0]]+'</option>' });
                 }
             },
             error: function() {
@@ -100,18 +98,17 @@ $this->title = 'My Yii Application';
             },
             method: 'post',
             success: function(tables) {
+                console.log(tables);
                 $('.table_'+table_index_parameter+' .table_field_list').html(''+
-                    '<div class="col-md-12 row">'+
-                        '<div class="col-md-3 row fields">'+
-                            '<h4>Campos a traer</h4>'+
-                            '<button class="btn btn-success btn-sm w-100" onclick="addFieldToSelect('+table_index_parameter+')">Agregar Campo</button>'+
-                            '<div class="col-md-12 fields_list">'+
+                    '<div class="mt-1">'+
+                        '<div class="fields">'+
+                            '<button class="btn btn-success btn-sm btn-block mb-1" onclick="addFieldToSelect('+table_index_parameter+')">Agregar Campo</button>'+
+                            '<div class="fields_list">'+
                             '</div>'+       
                         '</div>'+
-                        '<div class="col-md-9 constraints">'+
-                            '<h4>Condiciones de Búsqueda</h4>'+
-                            '<button class="btn btn-success btn-sm w-100" onclick="addConstraintToTable('+table_index_parameter+')">Agregar Condición</button>'+
-                            '<div class="col-md-12 constraints_list">'+
+                        '<div class="constraints">'+
+                            '<button class="btn btn-success btn-sm btn-block mb-1" onclick="addConstraintToTable('+table_index_parameter+')">Agregar Condición</button>'+
+                            '<div class="constraints_list">'+
                             '</div>'+  
                         '</div>'+
                     '</div>');
@@ -131,7 +128,7 @@ $this->title = 'My Yii Application';
     }
 
     function addFieldToSelect(table_index_parameter){
-        $('.table_'+table_index_parameter+' .table_field_list .fields .fields_list').append('<select class="field mt-3" id="" name=""></select><hr>');
+        $('.table_'+table_index_parameter+' .table_field_list .fields .fields_list').append('<select class="field m-1 form-control form-control-sm" id="" name=""></select>');
         $.each(tableList[table_index_parameter]['table_fields'], function(index) {
             $('.table_'+table_index_parameter+' .table_field_list .fields .fields_list .field').last().append(tableList[table_index_parameter]['table_fields'][index]);
         });
@@ -149,30 +146,38 @@ $this->title = 'My Yii Application';
             table_fields_for_render += value;
         });
 
-        $('.table_'+table_index_parameter+' .table_field_list .constraints .constraints_list').append('<div class="constraint mt-3">'+
-                '<select class="field col-md-4">'+table_fields_for_render+'</select>'+
+        $('.table_'+table_index_parameter+' .table_field_list .constraints .constraints_list').append('<div class="constraint m-1 row">'+
+                '<select class="field col-md-4 form-control form-control-sm">'+table_fields_for_render+'</select>'+
                 //'<select cass="type" id="" name="" onchange="changeTypeOfConrtaint"><option value="tabla">tabla</option><option value="valor">valor</option></select>'+
-                '<select class="options col-md-4">'+options+'</select>'+
-                '<input class="value col-md-4" type="text"/>'+
+                '<select class="options col-md-4 form-control form-control-sm">'+options+'</select>'+
+                '<input class="value col-md-4 form-control form-control-sm" type="text"/>'+
                 //'<select class="tables">'+table_list_for_render+'</select>'+
-            '</div><hr>');
+            '</div>');
     }
 
     function ajaxGetData(){
         let table_list = [];
         var table;
+        graph = {
+            nodes: [],
+            links: []
+        }
         /*
         $.each($('.table_container'), function(index){
             table_list.push($(this).children('.table_selected').val());
         });
         
         console.log(table_list);
-        /*
+        /**/
+
+        graph.nodes.push({'name': 'VCB', 'type' : 'DB'});
 
         /***/
         $.each($('.table_container'), function(index) { 
                 table = [];
                 table.push($(this).children('.table_selected').val());
+                graph.nodes.push({'name': $(this).children('.table_selected').val(), 'type' : 'table'});
+                graph.links.push({'source' : $(this).children('.table_selected').val(), 'target': 'VCB' })
                 tableFieldList = [];
                 tableConstraintList = [];
                 
@@ -203,10 +208,24 @@ $this->title = 'My Yii Application';
             },
             method: 'post',
             success: function(tables) {
-                $('#data-list').html('');
-                for(i = 0; i < tables.length; i++){
-                    $('#data-list').append('<pre>'+tables[i]+'</pre>');
+                console.log(tables);
+                $('#graph').html('<canvas id="network" width="'+$('#graph').width()+'" height="'+$('#graph').height()+'"></canvas>');
+                for(k = 0; k < tables.length; k++){
+                    for(i = 0; i < tables[k].length; i++){
+                        //var values = '<pre>';
+                        for(j = 0; j < Object.keys(tables[k][i]).length; j++){
+                            if(j == 0){
+                                graph.nodes.push({'name' : tables[k][i][Object.keys(tables[k][i])[j]], 'type': 'data'});
+                                graph.links.push({'source' : tables[k][i][Object.keys(tables[k][i])[j]], 'target' : table_list[k][0]})
+                            }
+                            console.log(tables[k][i][Object.keys(tables[k][i])[j]]);
+                            //values += Object.keys(tables[k][i])[j]+': '+tables[k][i][Object.keys(tables[k][i])[j]]+ ' / ';
+                        }
+                        //$('#graph').append(values +'</pre>');
+                    }
+                    //$('#graph').append('<hr>');
                 }
+                generateGraph();
             },
             error: function() {
                 console.log("No se ha podido obtener la información");
@@ -217,3 +236,4 @@ $this->title = 'My Yii Application';
 
     
 </script>
+<script src="js/graph.js"></script>

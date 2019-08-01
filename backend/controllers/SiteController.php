@@ -131,13 +131,19 @@ class SiteController extends Controller
 
         //if (Yii::$app->request->isAjax) {
             $req = Yii::$app->request->post();
-            //var_dump($req);
+
             foreach($req['table_list'] as $table){
                 $connection = Yii::$app->get('db2');
                 $command = $connection->createCommand("DESC ".$table);
                 
                 $result = $command->queryAll();
-                $tables_fields[] = array_merge(array('table_name' => $table), array('fields' => $result));
+                // foreach($result as $res){
+                //     $field_array = explode('_', $res['Field']);
+                //     if(sizeOf($field_array) == 4 && $field_array[1] == 'fk')
+                //         $related_table[] = ['related_table' => $field_array[2], 'related_field' => $field_array[2].'_pk_'.$field_array[3]];
+                // }
+
+                $tables_fields[] = array_merge(array('table_name' => $table), array('fields' => $result) /*, array('relations' => $related_table)*/);
             }
 
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -147,16 +153,19 @@ class SiteController extends Controller
 
     public function actionGetdata()
     {
-        $tables_data = [];
-        $query_fields = [];
-        $query_tables = [];
-        $query_constraints = [];
-        $rows = new Query;
+        $data = [];
+        
 
         //if (Yii::$app->request->isAjax) {
             $req = Yii::$app->request->post();
             //var_dump($req);
             foreach($req['table_list'] as $table){
+                $tables_data = [];
+                $query_fields = [];
+                $query_tables = [];
+                $query_constraints = [];
+                $rows = new Query;
+                 
                 if( $table[0] != '-- SELECCIONE --' ){
                     $query_tables[] = $table[0];
                     if(sizeOf($table[1]) == 0)
@@ -173,7 +182,39 @@ class SiteController extends Controller
                         }                
                     }
                 }
+
+                $hasFields = false;
+                $hasTables = false;
+                if(sizeOf($query_fields) > 1){
+                    $rows->select(implode(' , ',$query_fields));
+                    $hasFields = true;
+                }
+                else if(sizeOf($query_fields) == 1){
+                    $rows->select( $query_fields[0] );
+                    $hasFields = true;
+                }
+                
+                if(sizeOf($query_tables) > 1){
+                    $rows->from(implode(' , ',$query_tables));
+                    $hasTables = true;
+                }
+                else if(sizeOf($query_tables) == 1){
+                    $rows->from( $query_tables[0] );
+                    $hasTables = true;
+                }
+
+                if(sizeOf($query_constraints) > 1){
+                    $rows->where(implode(' and ',$query_constraints));
+                }
+                else if(sizeOf($query_constraints) == 1){
+                    $rows->where( $query_constraints[0] );
+                }
+                if($hasFields && $hasTables)
+                    $data[] = $rows->all(\Yii::$app->db2);
             }
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $data;
 
             if(sizeof($req['table_list']) > 0){
                 $hasFields = false;
