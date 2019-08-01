@@ -256,4 +256,108 @@ class SiteController extends Controller
             return $tables_data;
         //}
     }
+
+    public function actionGetdataFront()
+    {
+        $data = [];
+        //if (Yii::$app->request->isAjax) {
+            $req = Yii::$app->request->post();
+            //var_dump($req);
+            foreach($req['table_list'] as $table){
+                $tables_data = [];
+                $query_fields = [];
+                $query_tables = [];
+                $query_constraints = [];
+                $rows = new Query;
+                 
+                if( $table[0] != '-1' ){
+                    $query_tables[] = $table[0];
+                    if(sizeOf($table[1]) == 0)
+                        $query_fields[] = '*';
+                    else if(sizeOf($table[1]) > 0){
+                        foreach($table[1] as $field){
+                            $query_fields[] = $table[0].'.'.$field;
+                        }
+                    }
+                    if(isset($table[2])){
+                        foreach($table[2] as $constraint){
+                            if($constraint[1] != -1 && $constraint[2] != '')
+                                $query_constraints[] = $table[0].'.'.$constraint[0] .' '. $constraint[1] .' "'. $constraint[2].'"';
+                        }                
+                    }
+                }
+
+                $hasFields = false;
+                $hasTables = false;
+                if(sizeOf($query_fields) > 1){
+                    $rows->select(implode(' , ',$query_fields));
+                    $hasFields = true;
+                }
+                else if(sizeOf($query_fields) == 1){
+                    $rows->select( $query_fields[0] );
+                    $hasFields = true;
+                }
+                
+                if(sizeOf($query_tables) > 1){
+                    $rows->from(implode(' , ',$query_tables));
+                    $hasTables = true;
+                }
+                else if(sizeOf($query_tables) == 1){
+                    $rows->from( $query_tables[0] );
+                    $hasTables = true;
+                }
+
+                if(sizeOf($query_constraints) > 1){
+                    $rows->where(implode(' and ',$query_constraints));
+                }
+                else if(sizeOf($query_constraints) == 1){
+                    $rows->where( $query_constraints[0] );
+                }
+                if($hasFields && $hasTables)
+                    $data[] = $rows->all(\Yii::$app->db2);
+            }
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $data;
+
+            if(sizeof($req['table_list']) > 0){
+                $hasFields = false;
+                $hasTables = false;
+                if(sizeOf($query_fields) > 1){
+                    $rows->select(implode(' , ',$query_fields));
+                    $hasFields = true;
+                }
+                else if(sizeOf($query_fields) == 1){
+                    $rows->select( $query_fields[0] );
+                    $hasFields = true;
+                }
+                
+                if(sizeOf($query_tables) > 1){
+                    $rows->from(implode(' , ',$query_tables));
+                    $hasTables = true;
+                }
+                else if(sizeOf($query_tables) == 1){
+                    $rows->from( $query_tables[0] );
+                    $hasTables = true;
+                }
+
+                if(sizeOf($query_constraints) > 1){
+                    $rows->where(implode(' and ',$query_constraints));
+                }
+                else if(sizeOf($query_constraints) == 1){
+                    $rows->where( $query_constraints[0] );
+                }
+                if($hasFields && $hasTables)
+                    $tables_data = $rows->all(\Yii::$app->db2);
+            }
+            else{
+                $tables_data = 'No definió una consulta correctamente';
+            }
+
+            if($tables_data == []) $tables_data = 'No definió una consulta correctamente';
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $tables_data;
+        //}
+    }
 }
