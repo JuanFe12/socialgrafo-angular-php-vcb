@@ -25,11 +25,11 @@ class SiteController extends Controller
                 'rules' => [
                     [
                         //'actions' => ['login', 'error'],
-                        'actions' => ['login', 'error', '*', 'gettables', 'getfields', 'getdata'],
+                        'actions' => ['login', 'error', '*', 'gettables', 'getrelatedtables', 'getfields', 'getdata', 'getdatafront'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'gettables', 'getfields', 'getdata'],
+                        'actions' => ['logout', 'index', 'gettables', 'getrelatedtables', 'getfields', 'getdata', 'getdatafront'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -123,6 +123,14 @@ class SiteController extends Controller
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return $result;
         //}
+    }
+
+    public function actionGetrelatedtables()
+    {            
+        $result = \Yii::$app->params['related_tables'];
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return $result;
     }
 
     public function actionGetfields()
@@ -257,107 +265,54 @@ class SiteController extends Controller
         //}
     }
 
-    public function actionGetdataFront()
+    public function actionGetdatafront()
     {
         $data = [];
-        //if (Yii::$app->request->isAjax) {
-            $req = Yii::$app->request->post();
-            //var_dump($req);
-            foreach($req['table_list'] as $table){
-                $tables_data = [];
-                $query_fields = [];
-                $query_tables = [];
-                $query_constraints = [];
-                $rows = new Query;
-                 
-                if( $table[0] != '-1' ){
-                    $query_tables[] = $table[0];
-                    if(sizeOf($table[1]) == 0)
-                        $query_fields[] = '*';
-                    else if(sizeOf($table[1]) > 0){
-                        foreach($table[1] as $field){
-                            $query_fields[] = $table[0].'.'.$field;
-                        }
-                    }
-                    if(isset($table[2])){
-                        foreach($table[2] as $constraint){
-                            if($constraint[1] != -1 && $constraint[2] != '')
-                                $query_constraints[] = $table[0].'.'.$constraint[0] .' '. $constraint[1] .' "'. $constraint[2].'"';
-                        }                
-                    }
-                }
+        $req = Yii::$app->request->post();
 
-                $hasFields = false;
-                $hasTables = false;
-                if(sizeOf($query_fields) > 1){
-                    $rows->select(implode(' , ',$query_fields));
-                    $hasFields = true;
-                }
-                else if(sizeOf($query_fields) == 1){
-                    $rows->select( $query_fields[0] );
-                    $hasFields = true;
-                }
-                
-                if(sizeOf($query_tables) > 1){
-                    $rows->from(implode(' , ',$query_tables));
-                    $hasTables = true;
-                }
-                else if(sizeOf($query_tables) == 1){
-                    $rows->from( $query_tables[0] );
-                    $hasTables = true;
-                }
+        if($req == null) return 500;
+        if($req['constraint_list']) return 500;
+        if($req['select_list']) return 500;
 
-                if(sizeOf($query_constraints) > 1){
-                    $rows->where(implode(' and ',$query_constraints));
-                }
-                else if(sizeOf($query_constraints) == 1){
-                    $rows->where( $query_constraints[0] );
-                }
-                if($hasFields && $hasTables)
-                    $data[] = $rows->all(\Yii::$app->db2);
+        $constraints = $req['constraint_list'];
+        $selects = $req['select_list'];
+
+        $base_table = \Yii::$app->params['base_table'];
+        $rows = new Query;
+
+        //select
+        foreach ($selects as $key => $value) {
+            $rows->select($value);
+        }
+
+        //from
+        $rows->from($base_table);
+
+        //join
+        foreach (\Yii::$app->params['related_tables'] as $table){
+            $rows->join('INNER JOIN', $table['table'], $table['fk_field'].' = '.$table['field']);
+        }
+
+        //where
+        foreach ($constraints as $key => $value) {
+            $query_constraints[] = $value['table_field'].' '.$value['condition'].' '.$value['value'];
+        }
+
+        if( $req['joined'] ){
+            $rows->where(implode(' and ',$query_constraints));
+            $data[] = $rows->all(\Yii::$app->db2);
+        }
+        else{
+            foreach ($query_constraints as $key => $value) {
+                $new_query = $rows;
+                $new_query->where($value['table_field'].' '.$value['condition'].' '.$value['value']);
+                $data[] = $new_query->all(\Yii::$app->db2);
             }
+        }
+        
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return $data;
 
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return $data;
-
-            if(sizeof($req['table_list']) > 0){
-                $hasFields = false;
-                $hasTables = false;
-                if(sizeOf($query_fields) > 1){
-                    $rows->select(implode(' , ',$query_fields));
-                    $hasFields = true;
-                }
-                else if(sizeOf($query_fields) == 1){
-                    $rows->select( $query_fields[0] );
-                    $hasFields = true;
-                }
-                
-                if(sizeOf($query_tables) > 1){
-                    $rows->from(implode(' , ',$query_tables));
-                    $hasTables = true;
-                }
-                else if(sizeOf($query_tables) == 1){
-                    $rows->from( $query_tables[0] );
-                    $hasTables = true;
-                }
-
-                if(sizeOf($query_constraints) > 1){
-                    $rows->where(implode(' and ',$query_constraints));
-                }
-                else if(sizeOf($query_constraints) == 1){
-                    $rows->where( $query_constraints[0] );
-                }
-                if($hasFields && $hasTables)
-                    $tables_data = $rows->all(\Yii::$app->db2);
-            }
-            else{
-                $tables_data = 'No definió una consulta correctamente';
-            }
-
-            if($tables_data == []) $tables_data = 'No definió una consulta correctamente';
-
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return $tables_data;
-        //}
+        
     }
 }
