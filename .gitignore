@@ -46,3 +46,52 @@ phpunit.phar
 \.vscode/
 
 composer\.lock
+
+
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/frontend/socialgrafo/dist
+/frontend/socialgrafo//tmp
+/frontend/socialgrafo//out-tsc
+# Only exists if Bazel was run
+/frontend/socialgrafo//bazel-out
+
+# dependencies
+/frontend/socialgrafo/node_modules
+
+# profiling files
+/frontend/socialgrafo/chrome-profiler-events.json
+/frontend/socialgrafo/speed-measure-plugin.json
+
+# IDEs and editors
+/frontend/socialgrafo/.idea
+/frontend/socialgrafo/.project
+/frontend/socialgrafo/.classpath
+/frontend/socialgrafo/.c9/
+/frontend/socialgrafo/*.launch
+/frontend/socialgrafo/.settings/
+/frontend/socialgrafo/*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/frontend/socialgrafo/.sass-cache
+/frontend/socialgrafo/frontend/socialgrafo/connect.lock
+/frontend/socialgrafo/coverage
+/frontend/socialgrafo/libpeerconnection.log
+/frontend/socialgrafo/npm-debug.log
+/frontend/socialgrafo/yarn-error.log
+/frontend/socialgrafo/testem.log
+/typings
+
+# System Files
+/frontend/socialgrafo/.DS_Store
+/frontend/socialgrafo/Thumbs.db
