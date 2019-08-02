@@ -28,9 +28,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.sass"
+              "src/styles.sass",
+              "../socialgrafo/node_modules/semantic-ui-css/semantic.css"
             ],
-            "scripts": []
+            "scripts": [
+              "../socialgrafo/node_modules/jquery/dist/jquery.min.js",
+              "../socialgrafo/node_modules/semantic-ui-css/semantic.min.js"
+
+            ]
           },
           "configurations": {
             "production": {
