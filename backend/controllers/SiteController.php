@@ -4,6 +4,7 @@ namespace backend\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 use yii\db\Query;
@@ -267,12 +268,16 @@ class SiteController extends Controller
 
     public function actionGetdatafront()
     {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $data = [];
+        //return Yii::$app->request->post();
         $req = Yii::$app->request->post();
 
         if($req == null) return 500;
-        if($req['constraint_list']) return 500;
-        if($req['select_list']) return 500;
+        //return $req;
+        if(!isset($req['constraint_list'])) return 501;
+        if(!isset($req['select_list'])) return 502;
+        if(!isset($req['joined'])) return 503;
 
         $constraints = $req['constraint_list'];
         $selects = $req['select_list'];
@@ -281,16 +286,20 @@ class SiteController extends Controller
         $rows = new Query;
 
         //select
-        foreach ($selects as $key => $value) {
-            $rows->select($value);
-        }
+        //foreach ($selects as $key => $value) {
+            $rows->select(implode(' , ',$selects));
+            //$rows->distinct(true);
+        //}
 
         //from
         $rows->from($base_table);
 
         //join
-        foreach (\Yii::$app->params['related_tables'] as $table){
-            $rows->join('INNER JOIN', $table['table'], $table['fk_field'].' = '.$table['field']);
+        foreach (\Yii::$app->params['related_tables'] as $key => $table){
+            $rows->join(
+                'INNER JOIN', 
+                $table['table'], 
+                $table['fk_field'].' = '.$table['table'].'.'.$table['field'].'');
         }
 
         //where
@@ -298,17 +307,22 @@ class SiteController extends Controller
             $query_constraints[] = $value['table_field'].' '.$value['condition'].' '.$value['value'];
         }
 
-        if( $req['joined'] ){
+        //return var_dump($rows);
+        //$data[] = $rows->all(\Yii::$app->db2);
+
+        /* */
+        if( $req['joined'] == 'true' ){
             $rows->where(implode(' and ',$query_constraints));
             $data[] = $rows->all(\Yii::$app->db2);
         }
         else{
             foreach ($query_constraints as $key => $value) {
                 $new_query = $rows;
-                $new_query->where($value['table_field'].' '.$value['condition'].' '.$value['value']);
+                $new_query->where($value);
                 $data[] = $new_query->all(\Yii::$app->db2);
             }
         }
+        /** */
         
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return $data;
