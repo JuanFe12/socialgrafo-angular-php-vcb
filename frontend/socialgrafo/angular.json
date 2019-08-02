@@ -33,7 +33,8 @@
             ],
             "scripts": [
               "../socialgrafo/node_modules/jquery/dist/jquery.min.js",
-              "../socialgrafo/node_modules/semantic-ui-css/semantic.min.js"
+              "../socialgrafo/node_modules/jquery/dist/jquery.js",
+              "../socialgrafo/node_modules/semantic-ui-css/semantic.js"
 
             ]
           },

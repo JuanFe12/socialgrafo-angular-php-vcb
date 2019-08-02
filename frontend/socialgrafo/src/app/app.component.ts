@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ChartConst } from 'o2-chart-lib';
 
+
+declare  var $:any;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -886,7 +888,12 @@ export class AppComponent {
 
   }
 
-
+  button(){
+    $('.ui.dropdown')
+    .dropdown()
+  ;
+  
+  }
   // Add End --------------------------------------------
 
 }

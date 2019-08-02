@@ -1,9 +1,16 @@
 <div style="text-align:center">
-
-
         <h2>Force</h2>
         <o2-chart-lib-o2-chart [chartType]="forceTypeName" [configData]="configData"  [graphData]="forceDataJson" [svgWidth]="'1200'" [svgHeight]="'500'"></o2-chart-lib-o2-chart>
       
 </div>
 
+<div class="ui dropdown" >
+        <input type="hidden" name="gender">
+        <i class="dropdown icon" (click)="button()"></i>
+        <div class="default text">Gender</div>
+        <div class="menu">
+          <div class="item" data-value="male">Male</div>
+          <div class="item" data-value="female">Female</div>
+        </div>
+</div>
 <router-outlet></router-outlet>
