@@ -22,39 +22,13 @@ class SiteController extends Controller
     public function behaviors()
     {
         $behaviors = [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        //'actions' => ['login', 'error'],
-                        'actions' => ['login', 'error', '*', 'gettables', 'getrelatedtables', 'getfields', 'getdata', 'getdatafront'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index', 'gettables', 'getrelatedtables', 'getfields', 'getdata', 'getdatafront'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
             // For cross-domain AJAX request
             'corsFilter'  => [
                 'class' => \yii\filters\Cors::className(),
             ]
         ];  
 
-    public static function allowedDomains() {
-        return [
-             '*',                        // star allows all domains
-            //'http://test1.example.com',
-            //'http://test2.example.com',
-        ];
+        return $behaviors;
     }
 
     /**

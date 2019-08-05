@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SocialgrafoComponent } from './componentes/socialgrafo/socialgrafo.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +27,7 @@ import { O2ChartComponent,ChartConst } from 'o2-chart-lib';
     HttpClientModule,
     FormsModule,
     ChartsModule,
+    NgbModule,
  
     
   ],

@@ -9,30 +9,37 @@ import { Tables } from '../models/tables';
 })
 export class ConexionService {
 
+  private URL = 'http://localhost/socialgrafo/backend/web/index.php'
 
-  private url = 'http://socialgrafo-back.local/index.php?r=site/gettables'
-  private api = 'http://socialgrafo-back.local/index.php?r=site/getfields'
-  private data = 'http://socialgrafo-back.local/index.php?r=site/getdata'
+  private url = this.URL+'?r=site/gettables'
+  private api = this.URL+'?r=site/getfields'
+  //private data = this.URL+'?r=site/getdata'
+
+  private relatedTables = this.URL+'?r=site/getrelatedtables'
+  private getData = this.URL+'?r=site/getdatafront'
 
   constructor( public http: HttpClient) { }
 
-    Gettables(){
-      return this.http.get<Tables[]>(this.url); 
-    }
+  Gettables(){
+    return this.http.get<Tables[]>(this.url); 
+  }
 
   Getfileds(table_list: string){
     //const headers = new HttpHeaders().set('Content-Type', 'multipart/form-data');
     //console.log(table_list);
-    return this.http.get(this.api+"&table_list="+table_list);
+    return this.http.post(this.api,{table_list: table_list})
   }
-    GetData(){
-      let headers = new HttpHeaders().set('Content-Type','application/x-www-form-urlencoded');      
-      headers.append('Content-Type', 'application/x-www-form-urlencoded');
-      headers.append('Content-Type', 'application/json');
-      headers.append('Access-Control-Allow-Credentials', "*");
-      return this.http.get(this.data,{headers: headers}).subscribe(data => {
+
+  GetData(){
+    let headers = new HttpHeaders().set('Content-Type','application/x-www-form-urlencoded');      
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    headers.append('Content-Type', 'application/json');
+    headers.append('Access-Control-Allow-Credentials', "*");
+    return this.http.get(this.URL+'?r=site/getdata',{headers: headers}).subscribe(data => {
       console.log(data);
-        }); 
+    }); 
+  }
+
   
-    }
+
 }

@@ -38,6 +38,7 @@ phpunit.phar
 /frontend/web/index.php
 /frontend/web/index-test.php
 /frontend/web/robots.txt
+/frontend/config/
 /frontend/node_modules
 /backend/web/index.php
 /backend/web/index-test.php

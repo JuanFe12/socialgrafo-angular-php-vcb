@@ -19,6 +19,10 @@ return [
             // 'parsers' => [
             //     'application/json' => 'yii\web\JsonParser',
             // ]
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+                'multipart/form-data' => 'yii\web\MultipartFormDataParser'
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',

@@ -30,6 +30,7 @@
             "styles": [
               "src/styles.sass",
               "../socialgrafo/node_modules/semantic-ui-css/semantic.css"
+              
             ],
             "scripts": [
               "../socialgrafo/node_modules/jquery/dist/jquery.min.js",

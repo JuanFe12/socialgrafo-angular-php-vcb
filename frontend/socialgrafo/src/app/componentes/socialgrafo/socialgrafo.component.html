@@ -1,7 +1,35 @@
-<!--<div class="form-group container">
-    <label for="exampleFormControlSelect1">Agregar tabla</label>
-    <select [(ngModel)]="table_name" name="table_name" (change)="GetAllField(fields)"  class="form-control hide">
-      <option *ngFor="let table of tables ">{{table.Tables_in_socialgrafo}}</option>
-    </select>
-</div>-->
-<div #chart id="chart"></div>
+
+      <div class="title-first">
+        <h3 align="center" style="color:#3AA9B6;">Socialgrafo NewStetic</h3>
+  </div>
+  <hr class="distan">
+
+
+<div class="row">
+    <div class="col-sm-12 col-lg-2 tables">
+              <span class="title-first1" style="color:#3AA9B6;">Selecciona tus <b>Tablas</b></span>
+                       <select class="selectpicker" multiple [(ngModel)]="table_name" name="table_name" (change)="GetAllField(table_name)">
+                          <option *ngFor="let table of tables">{{table.Tables_in_pazred}}</option>
+                        </select>
+                        <hr/>
+                        <br>
+                        <br>
+           <ngb-accordion class="dat_tables" [closeOthers]="true" activeIds="static-1" *ngFor="let table of table_name" >
+                <ngb-panel id="static-1">
+                        <ng-template ngbPanelTitle >
+                               <span>{{table}}</span>
+                        </ng-template>
+                   <ng-template ngbPanelContent>
+                    <div class="accordion" id="accordionExample">
+                          <select class="form-control" id="sel1"  [(ngModel)]="table_name" name="table_name">
+                              <option *ngFor="let table of objectKeys()">{{table.fields[fields]}}</option>
+                          </select>    
+                      </div>
+                   </ng-template>
+                </ngb-panel>
+           </ngb-accordion>
+    </div>
+    <div class="col-sm-12 col-lg-8" style="text-align:center">
+       <o2-chart-lib-o2-chart [chartType]="forceTypeName" [configData]="configData"  [graphData]="forceDataJson" [svgWidth]="'1000'" [svgHeight]="'800'"></o2-chart-lib-o2-chart>
+    </div>        
+</div>
