@@ -30,19 +30,6 @@
                       </div>
                    </ng-template>
                 </ngb-panel>
-
-                <ngb-panel id="static-1"  name="cons">
-                      <ng-template ngbPanelTitle >
-                            <span>{{table}}</span>
-                      </ng-template>
-                    <ng-template ngbPanelContent>
-                      <div class="accordion" id="accordionExample">
-                            <select class="form-control" id="sel1"  [(ngModel)]="table_name" name="table_name">
-                                <option *ngFor="let table of tables_fields">{{table.Field}}</option>
-                            </select>    
-                        </div>
-                    </ng-template>
-                </ngb-panel>  
            </ngb-accordion>
     </div>
     <div class="col-sm-12 col-lg-8" style="text-align:center">
