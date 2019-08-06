@@ -1,0 +1,14 @@
+in the folder ChaningStates
+|
+|
+|¬¬¬¬¬ °in this folder go jquery, buttons, icons.
+
+in thw folder Layaout
+|
+|
+|¬¬¬¬¬¬¬¬°in this folder goes the layout.
+
+
+in the folder Theme
+|
+|¬¬¬¬¬¬¬¬¬¬¬¬°in this folder goes the colors, typography and images.

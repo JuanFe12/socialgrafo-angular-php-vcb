@@ -22,7 +22,6 @@ class SiteController extends Controller
     public function behaviors()
     {
         $behaviors = [
-            // For cross-domain AJAX request
             'corsFilter'  => [
                 'class' => \yii\filters\Cors::className(),
             ]

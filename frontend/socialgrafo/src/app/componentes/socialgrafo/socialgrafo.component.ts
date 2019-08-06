@@ -7,7 +7,6 @@ import { HttpClient } from '@angular/common/http';
 import { ChartConst } from 'o2-chart-lib';
 
 
-declare var $:any;
 @Component({
   selector: 'app-socialgrafo',
   templateUrl: './socialgrafo.component.html',
@@ -19,8 +18,10 @@ export class SocialgrafoComponent implements OnInit {
   tables: Tables[]
   table_list: []
   tables_fields: any =[]
-  table_name: string
   fields: string
+  field: string
+  cons: string
+  table_name: string
   mytable_list: any = []
 
   chartType:string;
@@ -58,44 +59,38 @@ export class SocialgrafoComponent implements OnInit {
       console.log(this.tables);
     })
   } 
-  objectKeys (objeto: any) {
-    const keys = Object.keys(objeto);
-    console.log(keys); // echa un vistazo por consola para que veas lo que hace "Object.keys"
-    return keys;
- }
+  
   
 
   GetAllField(){
       const tabla = this.table_name
 
       
-      this.connection.Getfileds(tabla).subscribe((field) =>{
+      this.connection.Getfileds(tabla).subscribe((fields) =>{
 
         
-          this.tables_fields = field
-          console.log(field);
-          /*for (let index = 0; index < field.length; index++) {
-            field[index]
-            for (let x = 0; x < field[index]['fields'].length; x++) {
-              console.log(field[index]['fields'][x]);
-            }
-        }*/
-      })
-      this.tables_fields.map((data) =>{
-        this.tables_fields = data
-        console.log(this.tables_fields['fields']);
-      });
-    } 
+          this.tables_fields = fields
+          console.log(fields);
+          for (let index = 0; index < fields.length; index++) {
+             this.tables_fields =  fields[index]
+              for (let x = 0; x < fields[index]['fields'].length; x++) {
+                this.tables_fields = fields[index]['fields']
+                console.log(this.tables_fields);
+              }
+        }
+
+    })
+  }
+
+  condicion(){
+     const field = this.cons
+  }
+
 
   Getdata(){
     this.connection.GetData()
   }
 
-  button(){
-    $('.ui.dropdown')
-    .dropdown()
-  ;
- }
  private initilizeData() {
     // this.configData = this.httpClient.get('assets/json/ConfigData.json');
     this.configData = {
@@ -857,7 +852,7 @@ export class SocialgrafoComponent implements OnInit {
     this.forceDataJson = 
     {
     	"groups": [
-        {"id": 1, "name": "Hokkaido"},
+        {"id": 1, "${Tables_in_pazred}": "Hokkaido"},
         {"id": 2, "name": "Tohoku"},
         {"id": 3, "name": "Kanto"},
         {"id": 4, "name": "Chubu"},

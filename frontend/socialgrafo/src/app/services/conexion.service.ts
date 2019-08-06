@@ -9,7 +9,7 @@ import { Tables } from '../models/tables';
 })
 export class ConexionService {
 
-  private URL = 'http://localhost/socialgrafo/backend/web/index.php'
+  private URL = 'http://socialgrafo-back.local/index.php'
 
   private url = this.URL+'?r=site/gettables'
   private api = this.URL+'?r=site/getfields'
