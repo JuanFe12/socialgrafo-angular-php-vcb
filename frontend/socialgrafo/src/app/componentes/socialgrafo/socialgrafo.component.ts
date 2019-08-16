@@ -18,12 +18,11 @@ export class SocialgrafoComponent implements OnInit {
   tables: Tables[]
   table_list: []
   tables_fields: any =[]
-  fields: string
   field: string
-  cons: string
   table_name: string
-  mytable_list: any = []
-
+  joined: true
+  select_list: string 
+  constraint_list: any = []
   chartType:string;
   configData:any;
   barDataJson:any;
@@ -68,7 +67,6 @@ export class SocialgrafoComponent implements OnInit {
       
       this.connection.Getfileds(tabla).subscribe((fields) =>{
 
-        
           this.tables_fields = fields
           console.log(fields);
           for (let index = 0; index < fields.length; index++) {
@@ -76,19 +74,14 @@ export class SocialgrafoComponent implements OnInit {
               for (let x = 0; x < fields[index]['fields'].length; x++) {
                 this.tables_fields = fields[index]['fields']
                 console.log(this.tables_fields);
-              }
+           }
         }
-
     })
   }
 
-  condicion(){
-     const field = this.cons
-  }
-
-
-  Getdata(){
-    this.connection.GetData()
+  condicion(joined, select_list, constraint_list){
+    this.connection.GetData(joined, select_list, constraint_list)
+    
   }
 
  private initilizeData() {

@@ -9,7 +9,7 @@
     <div class="col-sm-12 col-lg-2 tables">
               <span class="title-first1">Selecciona tus <b>Tablas</b>  
               </span>
-              <button type="button" class="btn condicions" (click)="condicion()" [(ngModel)]="condicion" name="cons">Condición</button>
+              <button type="button" class="btn condicions" (click)="condicion(joined,select_list,constraint_list)">Condición</button>
 
                        <select class="selectpicker" multiple [(ngModel)]="table_name" name="table_name" (change)="GetAllField(table_name)">
                           <option *ngFor="let table of tables">{{table.Tables_in_pazred}}</option>
@@ -24,13 +24,14 @@
                         </ng-template>
                    <ng-template ngbPanelContent>
                     <div class="accordion" id="accordionExample">
-                          <select class="form-control" id="sel1"  [(ngModel)]="table_name" name="table_name">
+                          <select class="form-control" id="sel1"  [(ngModel)]="table_list" name="table_name">
                               <option *ngFor="let table of tables_fields">{{table.Field}}</option>
                           </select>    
                       </div>
                    </ng-template>
                 </ngb-panel>
            </ngb-accordion>
+
     </div>
     <div class="col-sm-12 col-lg-8" style="text-align:center">
        <o2-chart-lib-o2-chart [chartType]="forceTypeName" [configData]="configData"  [graphData]="forceDataJson" [svgWidth]="'1000'" [svgHeight]="'800'"></o2-chart-lib-o2-chart>

@@ -9,6 +9,23 @@ import { Tables } from '../models/tables';
 })
 export class ConexionService {
 
+  public string = {nombre: 'felipe', email: 'juan@gmail.com', apellido: 'arias'};
+  public joined: boolean;
+  public constraint_list: {
+    "data":[
+        {
+            "table_field":[
+                {
+                    "table_field":"<field_name>",
+                    "condition":"< < >",
+                    "value":[
+                        {"field_option_1":"<field_option>"}
+                    ]
+                }
+            ]
+        }
+    ]
+}
   private URL = 'http://socialgrafo-back.local/index.php'
 
   private url = this.URL+'?r=site/gettables'
@@ -30,14 +47,9 @@ export class ConexionService {
     return this.http.post(this.api,{table_list: table_list})
   }
 
-  GetData(){
-    let headers = new HttpHeaders().set('Content-Type','application/x-www-form-urlencoded');      
-    headers.append('Content-Type', 'application/x-www-form-urlencoded');
-    headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Credentials', "*");
-    return this.http.get(this.URL+'?r=site/getdata',{headers: headers}).subscribe(data => {
-      console.log(data);
-    }); 
+  GetData(string, joined, constraint_list){
+
+    return this.http.post(this.getData,{joined, string, constraint_list})
   }
 
   
