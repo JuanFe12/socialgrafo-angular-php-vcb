@@ -21,12 +21,10 @@ class SiteController extends Controller
 
     public function behaviors()
     {
-        $behaviors = [
-            'corsFilter'  => [
-                'class' => \yii\filters\Cors::className(),
-            ]
-        ];  
-
+        $behaviors = parent::behaviors();
+        $behaviors['corsFilter'] = [
+            'class' => \yii\filters\Cors::className(),
+        ];
         return $behaviors;
     }
 
@@ -120,6 +118,28 @@ class SiteController extends Controller
                 // }
 
                 $tables_fields[] = array_merge(array('table_name' => $table), array('fields' => $result) /*, array('relations' => $related_table)*/);
+            }
+
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $tables_fields;
+        //}
+    }
+
+    public function actionGetbasefields()
+    {
+        $tables_fields = [];
+        $base_table = \Yii::$app->params['base_table'];
+                $connection = Yii::$app->get('db2');
+                $command = $connection->createCommand("DESC ".$base_table);
+                
+                $result = $command->queryAll();
+                // foreach($result as $res){
+                //     $field_array = explode('_', $res['Field']);
+                //     if(sizeOf($field_array) == 4 && $field_array[1] == 'fk')
+                //         $related_table[] = ['related_table' => $field_array[2], 'related_field' => $field_array[2].'_pk_'.$field_array[3]];
+                // }
+
+                $tables_fields[] = array_merge(array('table_name' => $base_table), array('fields' => $result) /*, array('relations' => $related_table)*/);
             }
 
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -235,8 +255,6 @@ class SiteController extends Controller
 
     public function actionGetdatafront()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $data = [];
         //return Yii::$app->request->post();
         $req = Yii::$app->request->post();
 
@@ -246,6 +264,8 @@ class SiteController extends Controller
         if(!isset($req['select_list'])) return 502;
         if(!isset($req['joined'])) return 503;
 
+        $data = [];
+        $query_constraints = [];
         $constraints = $req['constraint_list'];
         $selects = $req['select_list'];
 

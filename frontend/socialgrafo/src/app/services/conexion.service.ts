@@ -9,24 +9,18 @@ import { Tables } from '../models/tables';
 })
 export class ConexionService {
 
-  public string = {nombre: 'felipe', email: 'juan@gmail.com', apellido: 'arias'};
-  public joined: boolean;
-  public constraint_list: {
-    "data":[
-        {
-            "table_field":[
-                {
-                    "table_field":"<field_name>",
-                    "condition":"< < >",
-                    "value":[
-                        {"field_option_1":"<field_option>"}
-                    ]
-                }
-            ]
-        }
-    ]
-}
-  private URL = 'http://socialgrafo-back.local/index.php'
+  public select_list = ["name", "email","username", "status"];
+  public joined: boolean = false;
+  public constraint_list = [
+            {
+                "table_field":"id",
+                "condition":">",
+                "value":"0"
+            }
+    ];
+
+  //private URL = 'http://socialgrafo-back.local/index.php'
+  private URL = 'http://localhost/socialgrafo/backend/web/index.php'
 
   private url = this.URL+'?r=site/gettables'
   private api = this.URL+'?r=site/getfields'
@@ -47,9 +41,17 @@ export class ConexionService {
     return this.http.post(this.api,{table_list: table_list})
   }
 
-  GetData(string, joined, constraint_list){
+  GetData(joined, select_list,  constraint_list){
+    const headers = new HttpHeaders();
+    headers.append('Accept', 'application/json');
+    console.log(this.constraint_list);
+    this.http.post(this.getData, {joined: this.joined, select_list: this.select_list, constraint_list: this.constraint_list}, {headers: headers}).subscribe((data) =>{
+      console.log(data);
+      
+    });
+     //this.http.post(this.getData,{joined, select_list, constraint_list})
 
-    return this.http.post(this.getData,{joined, string, constraint_list})
+    
   }
 
   

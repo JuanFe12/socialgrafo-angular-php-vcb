@@ -5,13 +5,15 @@ return [
     'senderEmail' => 'racastellanos@vcb.com.co',
     'senderName' => 'Socialgrafo Administrador',
     'user.passwordResetTokenExpire' => 3600,
-    'base_table' => 'wp_userprofile',
+    'base_table' => 'users',
     'related_tables' => [
+        /*
         [
             'table' => 'wp_users',
             'field' => 'id',
             'fk_field' => 'wp_userprofile.fk_user_id'
         ],
+        /** */
         /*
         [
             'table' => 'ext_family_members',

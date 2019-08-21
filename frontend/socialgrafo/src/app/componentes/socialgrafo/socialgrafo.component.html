@@ -24,8 +24,8 @@
                         </ng-template>
                    <ng-template ngbPanelContent>
                     <div class="accordion" id="accordionExample">
-                          <select class="form-control" id="sel1"  [(ngModel)]="table_list" name="table_name">
-                              <option *ngFor="let table of tables_fields">{{table.Field}}</option>
+                          <select class="form-control " multiple name="table_name" [value]="tables_fields.value">
+                              <option *ngFor="let table of tables_fields" [value]="tables_fields.value">{{table.Field}}</option>
                           </select>    
                       </div>
                    </ng-template>

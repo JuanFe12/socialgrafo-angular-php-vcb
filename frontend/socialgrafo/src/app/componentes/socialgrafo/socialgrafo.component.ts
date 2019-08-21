@@ -65,23 +65,21 @@ export class SocialgrafoComponent implements OnInit {
       const tabla = this.table_name
 
       
-      this.connection.Getfileds(tabla).subscribe((fields) =>{
+      this.connection.Getfileds(tabla).subscribe((table) =>{
 
-          this.tables_fields = fields
+          let fields = this.tables_fields = table[0]['fields'];
           console.log(fields);
-          for (let index = 0; index < fields.length; index++) {
-             this.tables_fields =  fields[index]
-              for (let x = 0; x < fields[index]['fields'].length; x++) {
-                this.tables_fields = fields[index]['fields']
-                console.log(this.tables_fields);
-           }
-        }
+          /* 
+          for (let x = 0; x < fields.length; x++) {
+              this.tables_fields = fields
+              console.log(this.tables_fields);
+          }
+          /** */
     })
   }
 
   condicion(joined, select_list, constraint_list){
-    this.connection.GetData(joined, select_list, constraint_list)
-    
+    this.connection.GetData(joined, select_list, constraint_list);
   }
 
  private initilizeData() {
